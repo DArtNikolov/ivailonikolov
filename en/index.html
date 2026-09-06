@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ivailo Nikolov — Landscape Painting</title>
+<meta name="description" content="Ivailo Nikolov — professional artist specializing in landscape painting. Works inspired by travels around the world.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,400&family=Work+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FAFAF8;
+    --ink:#171512;
+    --ink-soft:#84807A;
+    --line:rgba(23,21,18,0.12);
+    --accent:#9C6B3E;
+    --sidebar-w: 280px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:'Work Sans', sans-serif; font-weight:300; line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{font-family:'Fraunces', serif; font-weight:400; margin:0;}
+  a{color:inherit;}
+  img{max-width:100%;display:block;}
+  .eyebrow{font-size:0.7rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--ink-soft);}
+
+  /* ---------- Sidebar ---------- */
+  .sidebar{
+    position:fixed; top:0; left:0; width:var(--sidebar-w); height:100vh;
+    padding:48px 34px;
+    display:flex; flex-direction:column; justify-content:space-between;
+    background:var(--paper); z-index:40; overflow-y:auto;
+  }
+  .sidebar-top{display:flex; flex-direction:column; gap:8px;}
+  .sidebar-logo{height:40px; width:auto; margin-bottom:4px;}
+  .sidebar-name{font-family:'Fraunces', serif; font-style:italic; font-weight:400; font-size:1.2rem;}
+  .sidebar-tagline{font-size:0.62rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--ink-soft);}
+  .sidebar-nav{margin-top:64px; display:flex; flex-direction:column; gap:24px;}
+  .sidebar-nav a{
+    font-size:0.76rem; letter-spacing:0.12em; text-transform:uppercase;
+    color:var(--ink); text-decoration:none; transition:color .25s ease;
+  }
+  .sidebar-nav a:hover{color:var(--accent);}
+  .sidebar-nav a.active{color:var(--ink-soft);}
+  .sidebar-bottom{display:flex; flex-direction:column; gap:20px;}
+  .sidebar-social{display:flex; gap:16px;}
+  .sidebar-social a{color:var(--ink-soft); transition:color .2s ease;}
+  .sidebar-social a:hover{color:var(--accent);}
+  .sidebar-social svg{width:16px; height:16px;}
+  .sidebar-lang{font-size:0.68rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-soft); text-decoration:none;}
+  .sidebar-lang:hover{color:var(--ink);}
+
+  .mobile-topbar{display:none;}
+  .mobile-nav{display:none;}
+
+  /* ---------- Content ---------- */
+  .content{margin-left:var(--sidebar-w);}
+  .wrap{max-width:900px; margin:0 auto; padding:0 56px;}
+
+  /* ---------- Gallery: endless scroll ---------- */
+  #gallery{padding:0 0 40px;}
+  .gallery-head{padding:56px 0 0; margin-bottom:0;}
+  .gallery-head h2{font-size:clamp(1.7rem, 2.6vw, 2.1rem); font-weight:300; font-style:italic;}
+  .gallery-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:4px; margin-top:40px; padding:0 0 0 56px;}
+  .work-block{position:relative; overflow:hidden; cursor:zoom-in; aspect-ratio:4/5;}
+  .work-block img{width:100%; height:100%; object-fit:cover; display:block; transition:transform .5s ease;}
+  .work-block:hover img{transform:scale(1.04);}
+  .work-block::after{content:""; position:absolute; inset:0; background:linear-gradient(to top, rgba(15,13,10,0.55), transparent 55%); opacity:0; transition:opacity .25s ease;}
+  .work-block:hover::after{opacity:1;}
+  .work-caption{position:absolute; left:16px; bottom:14px; right:16px; opacity:0; transform:translateY(6px); transition:opacity .25s ease, transform .25s ease;}
+  .work-block:hover .work-caption{opacity:1; transform:none;}
+  .work-caption .title{font-family:'Fraunces', serif; font-style:italic; font-size:0.98rem; color:#FAFAF8;}
+  .work-caption .medium{font-size:0.62rem; letter-spacing:0.08em; text-transform:uppercase; color:rgba(250,250,248,0.8); margin-top:3px;}
+
+  /* ---------- About ---------- */
+  #about{padding:80px 0;}
+  #about .about-grid{display:grid; grid-template-columns:0.85fr 1.15fr; gap:56px; align-items:start;}
+  .portrait{aspect-ratio:3/4; overflow:hidden;}
+  .portrait img{width:100%; height:100%; object-fit:cover;}
+  .about-body p{color:var(--ink-soft); margin:0 0 20px; font-weight:300;}
+  .about-body p:first-child{color:var(--ink);}
+  .about-accent{float:right; width:40%; max-width:190px; margin:4px 0 20px 26px;}
+  .about-accent img{width:100%; display:block;}
+  .about-accent figcaption{font-size:0.68rem; color:var(--ink-soft); margin-top:8px;}
+  .stat-line{margin-top:26px; padding-top:18px; border-top:1px solid var(--line); font-size:0.75rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-soft);}
+  .stat-line strong{color:var(--ink); font-weight:400;}
+
+  /* ---------- Shop ---------- */
+  #shop{padding:80px 0; background:#F3F1EB; margin-left:calc(-1 * 56px); margin-right:calc(-1 * 56px); padding-left:56px; padding-right:56px;}
+  .shop-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:34px 26px;}
+  .shop-card{cursor:pointer;}
+  .shop-card .thumb{aspect-ratio:4/5; overflow:hidden; background:#EDEAE2;}
+  .shop-card .thumb img{width:100%; height:100%; object-fit:cover; transition:transform .5s ease;}
+  .shop-card:hover .thumb img{transform:scale(1.035);}
+  .shop-card .info{margin-top:14px; display:flex; justify-content:space-between; align-items:baseline; gap:10px;}
+  .shop-card .name{font-family:'Fraunces', serif; font-style:italic; font-size:0.98rem;}
+  .shop-card .price{font-size:0.75rem; color:var(--ink-soft); white-space:nowrap;}
+  .shop-card .inquire{display:inline-block; margin-top:8px; font-size:0.66rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); text-decoration:none; border-bottom:1px solid transparent;}
+  .shop-card .inquire:hover{border-bottom-color:var(--accent);}
+  .shop-note{margin-top:40px; font-size:0.8rem; color:var(--ink-soft); border-left:2px solid var(--accent); padding-left:16px; max-width:60ch;}
+
+  /* ---------- Membership ---------- */
+  #membership{padding:90px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line);}
+  #membership .mem-grid{display:grid; grid-template-columns:1.2fr 0.8fr; gap:54px; align-items:center;}
+  #membership h2{font-size:clamp(1.5rem,2.4vw,1.9rem); font-weight:300; font-style:italic;}
+  #membership p{color:var(--ink-soft); margin-top:16px; font-weight:300;}
+  .tier{border-top:1px solid var(--line); padding-top:24px;}
+  .tier .price{font-family:'Fraunces', serif; font-size:1.9rem; font-weight:300;}
+  .tier .price span{font-size:0.82rem; font-family:'Work Sans', sans-serif; color:var(--ink-soft);}
+  .tier ul{list-style:none; padding:0; margin:20px 0 26px; color:var(--ink-soft); font-size:0.88rem;}
+  .tier li{padding:8px 0; border-top:1px solid var(--line);}
+  .tier li:first-child{border-top:none;}
+  .ghost-btn{display:inline-block; text-decoration:none; font-size:0.7rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink); border-bottom:1px solid var(--ink); padding-bottom:4px;}
+
+  /* ---------- Contact ---------- */
+  #contact{padding:90px 0 110px;}
+  .contact-grid{display:grid; grid-template-columns:0.9fr 1.1fr; gap:60px; align-items:start;}
+  .contact-photo{aspect-ratio:3/4; overflow:hidden;}
+  .contact-photo img{width:100%; height:100%; object-fit:cover;}
+  .contact-line{display:flex; justify-content:space-between; align-items:center; padding:16px 0; border-top:1px solid var(--line); text-decoration:none;}
+  .contact-line:last-of-type{border-bottom:1px solid var(--line); margin-bottom:38px;}
+  .contact-line .label{font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-soft);}
+  .contact-line .value{font-family:'Fraunces', serif; font-style:italic; font-size:1.05rem;}
+  .contact-line .arrow{color:var(--accent); font-family:'Fraunces', serif;}
+
+  .contact-form .form-row{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+  .field{margin-bottom:22px;}
+  .field label{display:block; font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:8px;}
+  .field input, .field textarea{
+    width:100%; border:none; border-bottom:1px solid var(--line);
+    background:transparent; padding:8px 2px; font-family:'Work Sans', sans-serif;
+    font-size:0.92rem; color:var(--ink); font-weight:300; outline:none;
+    transition:border-color .2s ease;
+  }
+  .field input:focus, .field textarea:focus{border-color:var(--ink);}
+  .field textarea{resize:vertical; min-height:110px;}
+  .submit-btn{
+    background:var(--ink); color:var(--paper); border:none; cursor:pointer;
+    padding:14px 34px; font-size:0.72rem; letter-spacing:0.16em; text-transform:uppercase;
+    transition:background .2s ease;
+  }
+  .submit-btn:hover{background:var(--accent);}
+  .form-status{margin-top:16px; font-size:0.82rem; color:var(--ink-soft);}
+  .form-status.success{color:var(--accent);}
+
+  footer{padding:34px 0; color:var(--ink-soft); font-size:0.7rem; letter-spacing:0.06em; border-top:1px solid var(--line);}
+  footer .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px;}
+
+  /* ---------- Lightbox ---------- */
+  .lightbox{position:fixed; inset:0; z-index:100; background:rgba(12,11,9,0.96); display:none; align-items:center; justify-content:center; padding:56px 24px; cursor:zoom-out;}
+  .lightbox.open{display:flex;}
+  .lightbox img{max-width:min(92vw, 1300px); max-height:86vh; object-fit:contain; cursor:default;}
+  .lightbox-close{position:absolute; top:22px; right:28px; background:none; border:1px solid rgba(250,250,248,0.4); color:#FAFAF8; width:38px; height:38px; border-radius:2px; font-size:1.3rem; line-height:1; cursor:pointer;}
+  .lightbox-close:hover{border-color:#FAFAF8;}
+
+  @media (max-width: 960px){
+    :root{--sidebar-w:0px;}
+    .sidebar{display:none;}
+    .content{margin-left:0;}
+    .gallery-grid{grid-template-columns:repeat(2, 1fr); gap:3px; padding:0;}
+    .mobile-topbar{
+      display:flex; align-items:center; justify-content:space-between;
+      position:sticky; top:0; z-index:30; background:rgba(250,250,248,0.94);
+      backdrop-filter:blur(6px); border-bottom:1px solid var(--line);
+      padding:16px 24px;
+    }
+    .mobile-brand{display:flex; align-items:center; gap:10px; text-decoration:none;}
+    .mobile-brand img{height:26px;}
+    .mobile-brand span{font-family:'Fraunces', serif; font-style:italic; font-size:0.95rem;}
+    .mobile-toggle{background:none; border:none; cursor:pointer; padding:6px;}
+    .mobile-toggle span{display:block; width:20px; height:1px; background:var(--ink); margin:5px 0;}
+    .mobile-nav{
+      position:fixed; top:60px; left:0; right:0; background:var(--paper);
+      max-height:0; overflow:hidden; border-bottom:1px solid var(--line);
+      transition:max-height .25s ease; z-index:29;
+      display:flex; flex-direction:column;
+    }
+    .mobile-nav.open{max-height:400px;}
+    .mobile-nav a{padding:16px 24px; border-top:1px solid var(--line); text-decoration:none; font-size:0.78rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink);}
+    .wrap{padding:0 24px;}
+    #shop{margin-left:-24px; margin-right:-24px; padding-left:24px; padding-right:24px;}
+    #about .about-grid{grid-template-columns:1fr;}
+    .portrait{max-width:260px;}
+    .about-accent{float:none; width:60%; max-width:220px; margin:0 auto 20px;}
+    #membership .mem-grid{grid-template-columns:1fr;}
+    #contact .wrap{padding:0 24px;}
+    .contact-grid{grid-template-columns:1fr;}
+    .contact-photo{max-width:280px;}
+    .contact-form .form-row{grid-template-columns:1fr;}
+  }
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto;} *{transition:none !important;} }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-top">
+    <img class="sidebar-logo" src="../images/logo-ink.png" alt="Ivailo Nikolov">
+    <span class="sidebar-name">Ivailo Nikolov</span>
+    <span class="sidebar-tagline">Original Oil Paintings</span>
+    <nav class="sidebar-nav" id="sidebarNav">
+      <a href="#gallery" data-section="gallery">Gallery</a>
+      <a href="#about" data-section="about">About</a>
+      <a href="#shop" data-section="shop">Shop</a>
+      <a href="#membership" data-section="membership">Membership</a>
+      <a href="#contact" data-section="contact">Contact</a>
+    </nav>
+  </div>
+  <div class="sidebar-bottom">
+    <div class="sidebar-social">
+      <a href="https://www.instagram.com/Dartnikolov" target="_blank" rel="noopener" aria-label="Instagram">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1"/></svg>
+      </a>
+      <a href="https://www.facebook.com/artnikolov" target="_blank" rel="noopener" aria-label="Facebook">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 8h-2a2 2 0 0 0-2 2v2H9v3h2v7h3v-7h2.2l.8-3H14v-1.5c0-.4.3-.5.6-.5H16V8Z"/></svg>
+      </a>
+      <a href="https://www.tiktok.com/@dartofnikolov" target="_blank" rel="noopener" aria-label="TikTok">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 4v9.5a3.5 3.5 0 1 1-3-3.46"/><path d="M14 4c.4 2.2 2 3.7 4 4"/></svg>
+      </a>
+    </div>
+    <a class="sidebar-lang" href="../index.html">Български</a>
+  </div>
+</aside>
+
+<div class="mobile-topbar">
+  <a class="mobile-brand" href="#gallery">
+    <img src="../images/logo-ink.png" alt="">
+    <span>Ivailo Nikolov</span>
+  </a>
+  <button class="mobile-toggle" id="mobileToggle" aria-label="Menu"><span></span><span></span><span></span></button>
+</div>
+<nav class="mobile-nav" id="mobileNav">
+  <a href="#gallery">Gallery</a>
+  <a href="#about">About</a>
+  <a href="#shop">Shop</a>
+  <a href="#membership">Membership</a>
+  <a href="#contact">Contact</a>
+  <a href="../index.html">Български</a>
+</nav>
+
+<div class="content">
+  <section id="gallery">
+    <div class="wrap">
+      <div class="gallery-head">
+        <div class="eyebrow" style="margin-bottom:14px;">Portfolio</div>
+        <h2>Selected paintings</h2>
+      </div>
+    </div>
+    <div id="worksList" class="gallery-grid"></div>
+  </section>
+
+  <section id="about">
+    <div class="wrap">
+      <div class="about-grid">
+        <div class="portrait"><img src="../images/portrait-ivailo.jpg" alt="Ivailo Nikolov"></div>
+        <div class="about-body">
+          <div class="eyebrow" style="margin-bottom:18px;">About the artist</div>
+          <p>Ivailo Nikolov (b. 1982) is an accomplished artist with exceptional talent and a distinctive voice. Each new subject seems to dictate its own style and approach — his paintings are alive with color, light, texture, atmosphere and energy.</p>
+          <p>A professional artist for over 15 years, he graduated from the Art College in Varna and later studied at the Art Academy in Veliko Tarnovo. He also spent four years working in Italy at the invitation of renowned artist Athos Faccincani.</p>
+          <figure class="about-accent">
+            <img src="../images/travel-accent.jpg" alt="Ivailo Nikolov while traveling">
+            <figcaption>In search of inspiration, on the road</figcaption>
+          </figure>
+          <p>Landscape painting is his true passion — inspired by beautiful, memorable places, he continues to travel the world in search of new perspectives and light. His paintings are held in private and corporate collections, as well as galleries internationally.</p>
+          <div class="stat-line"><strong>15+</strong> years of experience &nbsp;·&nbsp; <strong>4</strong> years working in Italy &nbsp;·&nbsp; inspiration from around the world</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="shop">
+    <div class="wrap">
+      <div class="gallery-head">
+        <div class="eyebrow" style="margin-bottom:14px;">Shop</div>
+        <h2>Paintings for sale</h2>
+      </div>
+      <div class="shop-grid" id="shopGrid"></div>
+      <p class="shop-note">Each painting is a unique original. Click to view it larger, or write directly to check availability, size and price.</p>
+    </div>
+  </section>
+
+  <section id="membership">
+    <div class="wrap">
+      <div class="mem-grid">
+        <div>
+          <div class="eyebrow" style="margin-bottom:14px;">Coming soon</div>
+          <h2>Exclusive access for subscribers</h2>
+          <p>A monthly subscription for close followers and collectors — early access to new paintings, glimpses of work in progress, and personal stories behind each landscape.</p>
+        </div>
+        <div class="tier">
+          <div class="price">€8 <span>/ month</span></div>
+          <ul>
+            <li>Early access to new work</li>
+            <li>Behind-the-scenes process photos</li>
+            <li>Direct contact for commissions</li>
+          </ul>
+          <a class="ghost-btn" href="#contact">Notify me at launch</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="wrap">
+      <div class="eyebrow" style="margin-bottom:18px;">Contact</div>
+      <h2 style="font-weight:300; font-style:italic; font-size:1.9rem; margin-bottom:40px;">Get in touch</h2>
+      <div class="contact-grid">
+        <div class="contact-photo"><img src="../images/portrait-ivailo.jpg" alt="Ivailo Nikolov"></div>
+        <div>
+          <a class="contact-line" href="mailto:ivo_nikolkow@yahoo.com">
+            <span class="label">Email</span><span class="value">ivo_nikolkow@yahoo.com</span><span class="arrow">↗</span>
+          </a>
+          <a class="contact-line" href="https://www.instagram.com/Dartnikolov" target="_blank" rel="noopener">
+            <span class="label">Instagram</span><span class="value">@Dartnikolov</span><span class="arrow">↗</span>
+          </a>
+          <a class="contact-line" href="https://www.facebook.com/artnikolov" target="_blank" rel="noopener">
+            <span class="label">Facebook</span><span class="value">artnikolov</span><span class="arrow">↗</span>
+          </a>
+          <a class="contact-line" href="https://www.tiktok.com/@dartofnikolov" target="_blank" rel="noopener">
+            <span class="label">TikTok</span><span class="value">@dartofnikolov</span><span class="arrow">↗</span>
+          </a>
+
+          <form class="contact-form" id="contactForm" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+            <input type="hidden" name="form-name" value="contact">
+            <p style="display:none;"><label>Don't fill this out: <input name="bot-field"></label></p>
+            <div class="form-row">
+              <div class="field">
+                <label for="fname">First Name</label>
+                <input type="text" id="fname" name="first_name" required>
+              </div>
+              <div class="field">
+                <label for="lname">Last Name</label>
+                <input type="text" id="lname" name="last_name" required>
+              </div>
+            </div>
+            <div class="field">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" required>
+            </div>
+            <div class="field">
+              <label for="message">Message</label>
+              <textarea id="message" name="message" required></textarea>
+            </div>
+            <button class="submit-btn" type="submit">Submit</button>
+            <div class="form-status" id="formStatus"></div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <span>© <span id="year"></span> Ivailo Nikolov</span>
+      <span>The Art of Ivailo Nikolov</span>
+    </div>
+  </footer>
+</div>
+
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightboxClose" aria-label="Close">✕</button>
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  const mobileToggle = document.getElementById('mobileToggle');
+  const mobileNav = document.getElementById('mobileNav');
+  mobileToggle.addEventListener('click', () => mobileNav.classList.toggle('open'));
+  mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobileNav.classList.remove('open')));
+
+  const works = [
+    {img:'../images/painting-sailboat-sunset-wm.jpg', title:'Schooner at Sunset', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-boat-shore-wm.jpg', title:'Boat on the Shore', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-lavender-field-wm.jpg', title:'Lavender Field', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-lavender-tree-wm.jpg', title:'Tree in the Lavender Field', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-boats-dock-red-wm.jpg', title:'Boats at the Dock', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-autumn-river-boat-wm.jpg', title:'Autumn by the River', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-autumn-alley-wm.jpg', title:'Autumn Alley', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-boats-harbor-wm.jpg', title:'Boats in the Harbor', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-reeds-boat-sunset-wm.jpg', title:'Boat Among the Reeds', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-lavender-red-sky-wm.jpg', title:'Lavender Under a Red Sky', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-two-boats-shore-wm.jpg', title:'Boats on the Shore', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-boat-dock-dusk-wm.jpg', title:'Boat at the Dock, Dusk', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-fiery-sunset-boat-wm.jpg', title:'Fiery Sunset', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-poppy-field-wm.jpg', title:'Poppy Field', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-fishing-boat-lake-wm.jpg', title:'Fishing Boat on the Lake', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-sailboat-waves-wm.jpg', title:'Schooner Among the Waves', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-poppies-cypress-wm.jpg', title:'Poppies and Cypresses', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-harbor-reflections-wm.jpg', title:'Harbor Reflections', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-lone-tree-lavender-wm.jpg', title:'Lone Tree in the Lavender', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-venice-canal-wm.jpg', title:'Venice Canal', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-autumn-tunnel-alley-wm.jpg', title:'Autumn Tunnel Alley', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-autumn-tree-closeup-wm.jpg', title:'Autumn Tree', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-haystack-hill-wm.jpg', title:'Haystack on the Hill', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-sailboat-dusk-wm.jpg', title:'Schooner at Dusk', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-boat-pier-sunset-wm.jpg', title:'Boat at the Pier', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-venice-gondolas-wm.jpg', title:'Gondolas in Venice', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-island-sunset-reflections-wm.jpg', title:'Island at Sunset', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-red-sailboat-deep-sea-wm.jpg', title:'Red Sailboat on Deep Blue Sea', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-abstract-canyon-wm.jpg', title:'Abstract Canyon', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-lighthouse-sailboat-wm.jpg', title:'Lighthouse and Sailboat', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-lighthouse-harbor-reflections-wm.jpg', title:'Lighthouse Over the Water', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-red-field-sunset-wm.jpg', title:'Red Field at Sunset', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-abstract-sailboat-wm.jpg', title:'Abstract Schooner', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-storm-sailboat-red-sails-wm.jpg', title:'Schooner in Stormy Seas', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-poppy-blue-flowers-wm.jpg', title:'Poppies and Wildflowers', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-sailboat-big-waves-wm.jpg', title:'Schooner Among the Swells', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-two-boats-golden-sunset-wm.jpg', title:'Boats at Golden Sunset', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-two-sailboats-sea-wm.jpg', title:'Two Schooners at Sea', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-dramatic-sunset-sea-wm.jpg', title:'Dramatic Sunset Over the Sea', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-poppies-horizon-wm.jpg', title:'Poppies on the Horizon', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-ship-harbor-night-wm.jpg', title:'Ship in the Harbor at Night', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-boat-pier-evening-lights-wm.jpg', title:'Boat at the Pier, Evening', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-boat-dock-blue-dusk-wm.jpg', title:'Boat at the Dock, Blue Dusk', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-poppies-fence-sunset-wm.jpg', title:'Poppies by the Fence', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-sailboat-purple-sunset-wm.jpg', title:'Sailboat in a Purple Sunset', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-boats-harbor-warm-reflections-wm.jpg', title:'Boats in the Harbor', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-canyon-colors-wm.jpg', title:'Canyon in Color', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-blue-forest-autumn-wm.jpg', title:'Blue Forest', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-abstract-boats-shore-wm.jpg', title:'Abstract Boats on the Shore', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-lavender-rows-tree-wm.jpg', title:'Lavender Rows', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-lone-tree-field-sunset-wm.jpg', title:'Lone Tree in the Field at Sunset', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-blue-autumn-forest-wm.jpg', title:'Autumn Forest in Blue', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-autumn-lake-boats-wm.jpg', title:'Autumn Lake with Boats', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-path-to-tree-wm.jpg', title:'Path to the Tree', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-abstract-harbor-wm.jpg', title:'Abstract Harbor', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-tall-ship-pink-wm.jpg', title:'Tall Ship in Pink', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-harbor-lighthouse-abstract-wm.jpg', title:'Harbor with Lighthouse', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-colorful-boats-harbor-wm.jpg', title:'Colorful Boats', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-poppies-purple-sky-wm.jpg', title:'Poppies Under a Purple Sky', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-dried-flowers-sunset-wm.jpg', title:'Dried Flowers at Sunset', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-blue-forest-path-wm.jpg', title:'Blue Forest Path', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-lavender-blue-tree-wm.jpg', title:'Lavender and Blue Tree', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-blue-boats-dock-wm.jpg', title:'Blue Boats at the Dock', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-greek-alley-wm.jpg', title:'Greek Alley', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-cliffs-sunset-wm.jpg', title:'Cliffs at Sunset', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-poppies-sunbeams-wm.jpg', title:'Poppies in the Sunbeams', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-blue-boat-reflections-wm.jpg', title:'Blue Boat in Reflections', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-cliffs-flowers-wm.jpg', title:'Cliffs with Flowers', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-calm-rocky-coast-wm.jpg', title:'Calm Rocky Coast', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-sailboat-orange-abstract-wm.jpg', title:'Schooner in Orange', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-dock-sunset-blue-gold-wm.jpg', title:'Dock at Sunset', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-colorful-boats-dock-wm.jpg', title:'Colorful Boats at the Dock', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-poppies-hills-wm.jpg', title:'Poppies by the Hills', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-red-autumn-forest-abstract-wm.jpg', title:'Red Autumn Forest', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-night-harbor-lights-wm.jpg', title:'Harbor Lights at Night', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-blue-coastline-wm.jpg', title:'Blue Coastline', medium:'Oil on canvas', price:'Price on request'},
+    {img:'../images/painting-bench-lake-sunset-wm.jpg', title:'Bench by the Lake at Sunset', medium:'Oil on canvas', price:'Price on request'}
+  ];
+
+  const worksList = document.getElementById('worksList');
+  works.forEach(w => {
+    const block = document.createElement('div');
+    block.className = 'work-block';
+    block.innerHTML = `
+      <img src="${w.img}" alt="${w.title}" loading="lazy">
+      <div class="work-caption">
+        <div class="title">${w.title}</div>
+        <div class="medium">${w.medium}</div>
+      </div>
+    `;
+    block.addEventListener('click', () => openLightbox(w.img, w.title));
+    worksList.appendChild(block);
+  });
+
+  const shopGrid = document.getElementById('shopGrid');
+  works.forEach(w => {
+    const card = document.createElement('div');
+    card.className = 'shop-card';
+    card.innerHTML = `
+      <div class="thumb"><img src="${w.img}" alt="${w.title}" loading="lazy"></div>
+      <div class="info"><span class="name">${w.title}</span><span class="price">${w.price}</span></div>
+      <a class="inquire" href="mailto:ivo_nikolkow@yahoo.com?subject=${encodeURIComponent('Inquiry: ' + w.title)}">Inquire to buy →</a>
+    `;
+    card.querySelector('.thumb').addEventListener('click', () => openLightbox(w.img, w.title));
+    shopGrid.appendChild(card);
+  });
+
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightboxImg');
+  const lightboxClose = document.getElementById('lightboxClose');
+  function openLightbox(src, title){
+    lightboxImg.src = src; lightboxImg.alt = title || '';
+    lightbox.classList.add('open'); document.body.style.overflow = 'hidden';
+  }
+  function closeLightbox(){
+    lightbox.classList.remove('open'); lightboxImg.src = ''; document.body.style.overflow = '';
+  }
+  lightboxClose.addEventListener('click', closeLightbox);
+  lightbox.addEventListener('click', (e) => { if(e.target === lightbox) closeLightbox(); });
+  document.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeLightbox(); });
+
+  /* Scroll-spy for sidebar nav */
+  const navLinks = document.querySelectorAll('.sidebar-nav a');
+  const sections = ['gallery','about','shop','membership','contact'].map(id => document.getElementById(id));
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        const id = entry.target.id;
+        navLinks.forEach(a => a.classList.toggle('active', a.dataset.section === id));
+      }
+    });
+  }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
+  sections.forEach(s => { if(s) observer.observe(s); });
+
+  /* --- Contact form (Netlify Forms, AJAX submit) --- */
+  const contactForm = document.getElementById('contactForm');
+  const formStatus = document.getElementById('formStatus');
+  if(contactForm){
+    contactForm.addEventListener('submit', function(e){
+      e.preventDefault();
+      const data = new URLSearchParams(new FormData(contactForm)).toString();
+      formStatus.textContent = 'Sending…';
+      formStatus.className = 'form-status';
+      fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: data
+      }).then(() => {
+        formStatus.textContent = 'Thank you! Your message has been sent.';
+        formStatus.className = 'form-status success';
+        contactForm.reset();
+      }).catch(() => {
+        formStatus.textContent = 'Something went wrong. Please try again or email directly.';
+        formStatus.className = 'form-status';
+      });
+    });
+  }
+</script>
+
+</body>
+</html>
